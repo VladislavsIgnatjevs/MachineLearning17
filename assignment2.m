@@ -25,66 +25,19 @@ orig_digit_eight = digit_eight;
 %c - centroids locations
 %k-means(data, number_of_clusters) 
 %prepare data for scatter plot
-[idx,c,x1,x2,x_grid,idx_2_region] = prepareDataForScatter3Clust(score_ones);
-    
-figure;
-gscatter(x_grid(:,1),x_grid(:,2),idx_2_region,...
-    [0,0.75,0.75;0.75,0,0.75;0.75,0.75,0],'..');
-hold on;
-plot(score_ones(:,1),score_ones(:,2),'k*','MarkerSize',5);
-title 'MNISTs Vectorised digit One';
-xlabel 'dim1';
-ylabel 'dim2';
-legend('Cluster 1','Cluster 2','Cluster 3','Data','Location','SouthEast');
-hold off;    
 
-%--------centroids and clusters
-opts = statset('Display','final');
-[idx_ones, c_ones] = kmeans(score_ones,3,'Distance','cityblock',...
-    'Replicates',5,'Options',opts);
-
-figure;
-plot(score_ones(idx_ones==1,1),score_ones(idx_ones==1,2),'r.','MarkerSize',12)
-hold on
-plot(score_ones(idx_ones==2,1),score_ones(idx_ones==2,2),'b.','MarkerSize',12)
-hold on
-plot(score_ones(idx_ones==3,1),score_ones(idx_ones==3,2),'g.','MarkerSize',12)
-
-plot(c_ones(:,1),c_ones(:,2),'kx',...
-     'MarkerSize',15,'LineWidth',3)
-legend('Cluster 1','Cluster 2','Cluster 3','Centroids',...
-       'Location','NW')
-title 'Cluster Assignments and Centroids in Ones'
-hold off
+%digit one
+PCAKmeansFiguresOnes(score_ones);
+%digit five
+PCAKmeansFiguresFives(score_fives);
+%digit eight
+PCAKmeansFiguresEights(score_eights);
 
 
-[idx_fives,c_fives] = kmeans(score_fives,3);
-[idx_eights,c_eights] = kmeans(score_eights,3);
+% using LDA to reduce the dimensions to 2 for each image descriptor
 
 
 
-
-
-
-
-% mEights = mean(digit_eight);
-% digit_eight = digit_eight - repmat(mEights, size(digit_eight,1),1);
-% covarEights = cov(digit_eight);
-% [vEights,dEights] = eigs(covarEights);
-% scoreEights = digit_eight*vEights(:,1:2);
-% 
-% mFives = mean(digit_five);
-% digit_five = digit_five - repmat(mFives, size(digit_five,1),1);
-% covarFives = cov(digit_five);
-% [vFives,dFives] = eigs(covarFives);
-% 
-% scoreFives = digit_five*vFives(:,1:2);
-% 
-% 
-% 
-% 
-% 
-% 
 % % % use lda to do the same (q2)
 % % preparing the vectors for 'virginica' against the rest, i.e., 'virginica' as class 1 % and others as class ‘0’
 % lda_digit_one = orig_digit_one;
