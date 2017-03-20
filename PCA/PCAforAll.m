@@ -21,10 +21,3 @@ all_data = [digit_one digit_five digit_eight]';
 %prepare data for scatter plot
 
 [idx,c,x1,x2,x_grid,idx_2_region] = PCAKmeansFiguresALL(score);
-
-
-
-
-
-
-

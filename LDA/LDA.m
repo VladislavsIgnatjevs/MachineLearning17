@@ -1,92 +1,91 @@
-% LDA - MATLAB subroutine to perform linear discriminant analysis
-% by Will Dwinnell and Deniz Sevis
-%
-% Use:
-% W = LDA(Input,Target,Priors)
-%
-% W       = discovered linear coefficients (first column is the constants)
-% Input   = predictor data (variables in columns, observations in rows)
-% Target  = target variable (class labels)
-% Priors  = vector of prior probabilities (optional)
-%
-% Note: discriminant coefficients are stored in W in the order of unique(Target)
-%
-% Example:
-%
-% % Generate example data: 2 groups, of 10 and 15, respectively
-% X = [randn(10,2); randn(15,2) + 1.5];  Y = [zeros(10,1); ones(15,1)];
-%
-% % Calculate linear discriminant coefficients
-% W = LDA(X,Y);
-%
-% % Calulcate linear scores for training data
-% L = [ones(25,1) X] * W';
-%
-% % Calculate class probabilities
-% P = exp(L) ./ repmat(sum(exp(L),2),[1 2]);
-%
-%
-% Last modified: Dec-11-2010
+%load data
+load('AC50001_assignment2_data.mat');
 
+% using LDA to reduce the dimensions to 2 for each image descriptor
+%combine all data
+all_data = [digit_one digit_five digit_eight]' ;
+all_data_label = [];
 
-function W = LDA(Input,Target,Priors)
+meanAll = mean(all_data);
+all_data = all_data - repmat(meanAll, size(all_data,1),1);
 
-% Determine size of input data
-[n m] = size(Input);
-
-% Discover and count unique class labels
-ClassLabel = unique(Target);
-k = length(ClassLabel);
-
-% Initialize
-nGroup     = NaN(k,1);     % Group counts
-GroupMean  = NaN(k,m);     % Group sample means
-PooledCov  = zeros(m,m);   % Pooled covariance
-W          = NaN(k,m+1);   % model coefficients
-
-if  (nargin >= 3)  PriorProb = Priors;  end
-
-% Loop over classes to perform intermediate calculations
-for i = 1:k,
-    % Establish location and size of each class
-    Group      = (Target == ClassLabel(i));
-    nGroup(i)  = sum(double(Group));
-    
-    % Calculate group mean vectors
-    GroupMean(i,:) = mean(Input(Group,:));
-    
-    % Accumulate pooled covariance information
-    PooledCov = PooledCov + ((nGroup(i) - 1) / (n - k) ).* cov(Input(Group,:));
-end
-
-% Assign prior probabilities
-if  (nargin >= 3)
-    % Use the user-supplied priors
-    PriorProb = Priors;
-else
-    % Use the sample probabilities
-    PriorProb = nGroup / n;
-end
-
-% Loop over classes to calculate linear discriminant coefficients
-for i = 1:k,
-    % Intermediate calculation for efficiency
-    % This replaces:  GroupMean(g,:) * inv(PooledCov)
-    Temp = GroupMean(i,:) / PooledCov;
-    
-    % Constant
-    W(i,1) = -0.5 * Temp * GroupMean(i,:)' + log(PriorProb(i));
-    
-    % Linear
-    W(i,2:end) = Temp;
-end
-
-% Housekeeping
-clear Temp
-
+%get labels
+for k=1:size(all_data,1)
+    if k<= 100
+        all_data_label = [all_data_label;'1'];
+    end
+    if k >100 && k <= 200
+        
+        all_data_label = [all_data_label;'5'];
+    end
+    if k > 200
+        all_data_label = [all_data_label;'8'];
+    end
 end
 
 
-% EOF
+
+classOnes = all_data(all_data_label=='1',:);
+classFives = all_data(all_data_label=='5',:);
+classEights = all_data(all_data_label=='8',:);
+
+%means
+muOnes = mean(classOnes,1);
+muFives = mean(classFives,1);
+muEights = mean(classEights,1);
+
+%class covariance matrices (from transposed class matrices)
+covarOnes = cov(classOnes);
+covarFives = cov(classFives);
+covarEights = cov(classEights);
+
+%within class scatter mask
+sw = covarOnes + covarFives + covarEights;
+
+%mean of the class means
+meanClassMeans = (muOnes + muFives + muEights)./3;
+
+%each of classes has 100 samples, no need to
+%recalculate using size(class,2)
+
+%between class scatter matrix
+sbOnes = 100 .* (muOnes-meanClassMeans)'*(muOnes-meanClassMeans);
+sbFives = 100 .* (muFives-meanClassMeans)'*(muFives-meanClassMeans);
+sbEights = 100 .* (muEights-meanClassMeans)'*(muEights-meanClassMeans);
+
+sb = sbOnes+ sbFives+sbEights;
+
+%LDA projection vector
+
+%addding small number to avoid inv on zero
+dc=0.00001*eye(size(sw));
+
+sw_new=sw+dc;
+
+inverted_SW=inv(sw_new)*sb;
+    
+% computing the projection vectors:
+[v1,d] = eig(inverted_SW);
+
+score = (all_data*v1(:,1:2));
+
+%Or the following code to plot data after LDA projection:
+% the class ones:
+figure
+
+
+scatter(score(1:100,1), score(1:100,2), 'r', 'x'); %% look at only one direction will be fine
+hold on;
+scatter(score(101:200,1), score(101:200,2),'b', '*');
+hold on;
+scatter(score(201:300,1), score(201:300,2), 'g', 'o');
+title 'LDA';
+legend('Ones','Fives','Eights','Data','Location','NorthEast');  
+hold off;
+
+
+
+
+
 
 

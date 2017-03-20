@@ -13,13 +13,9 @@ ylabel 'dim2';
 legend('Ones','Fives','Eights','Data','Location','SouthEast');
 hold off;    
 
-
-
 opts = statset('Display','final');
 [idx, c] = kmeans(PCA_score,3,'Distance','cityblock',...
     'Replicates',5,'Options',opts);
-
-
 
 %figure 2
 figure;
