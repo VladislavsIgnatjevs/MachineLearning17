@@ -36,4 +36,16 @@ legend('Ones','Fives','Eights','Centroids',...
 title 'Cluster Assignments and Centroids in digits 1,5,8'
 hold off
 
+%plot data after PCA projection:
+figure;
+
+scatter(PCA_score(1:100,1), PCA_score(1:100,2),'Marker','x'); %% look at only one direction will be fine
+hold on;
+scatter(PCA_score(101:200,1), PCA_score(101:200,2),'Marker','+');
+hold on;
+scatter(PCA_score(201:300,1), PCA_score(201:300,2), 'Marker','*');
+title 'PCA digits 1,5,8'
+legend('Ones','Fives','Eights',...
+       'Location','NW')
+hold off;
 end

@@ -1,5 +1,5 @@
 %clear workspace
-clear all;
+clear;
 
 %load data
 load('AC50001_assignment2_data.mat');
@@ -9,12 +9,8 @@ orig_digit_one = digit_one;
 orig_digit_five = digit_five;
 orig_digit_eight = digit_eight;
 
-
-
 %combine all data
 all_data = [digit_one digit_five digit_eight]';
-
-
 
 [score] = calculatePCAforAll(all_data);
 
