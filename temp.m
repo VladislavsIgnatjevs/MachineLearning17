@@ -23,9 +23,14 @@ for k=1:size(all_data,1)
 end
 
 
-classOnes = all_data(all_data_label==1,:);
-classFives = all_data(all_data_label==5,:);
-classEights = all_data(all_data_label==8,:);
+ classOnes = all_data(all_data_label==1,:);
+ classFives = all_data(all_data_label==5,:);
+ classEights = all_data(all_data_label==8,:);
+
+% classOnes = digit_one;
+% classFives = digit_five;
+% classEights = digit_eight;
+
 
 %means
 muOnes = mean(classOnes);
@@ -43,12 +48,11 @@ sw = covarOnes + covarFives + covarEights;
 
 
 %mean of the class means
-meanClassMeans = (muOnes + muFives + muEights)./3;
+meanClassMeans = (muOnes + muFives + muEights)/3;
 
 %each of classes has 100 samples, no need to 
 %recalculate using size(class,2)
-%center of all classes 
-mu = [5;5];
+
 %between class scatter matrix
 sbOnes = 100 .* (muOnes-meanClassMeans)*(muOnes-meanClassMeans)';
 sbFives = 100 .* (muFives-meanClassMeans)*(muFives-meanClassMeans)';
@@ -60,54 +64,82 @@ sb = sbOnes+ sbFives+sbEights;
 inv_sw = inv(sw);
 invSw_by_sb = inv_sw *sb;
 % computing the projection vectors:
-[v,d] = eig(invSW);
+v = eig(invSw_by_sb);
 
-W1 = v(:,1);
-W2 = v(:,2);
+score = (all_data*v);
 
-hfig = figure;
-axes1 = axes('parent', hfig, 'FontWeight','bold','FontSize',12);
-hold('all');
+%Or the following code to plot data after LDA projection:
+% the class ones:
+x1 = score(all_data_label==1);
+lm1 = mean(x1);
+lstd1 = std(x1);
+class1_pdf = mvnpdf(x1,lm1,lstd1);
+% the class fives
+x5 = score(all_data_label==5);
+lm5 = mean(x5);
+lstd5 = std(x5);
+class5_pdf = mvnpdf(x5, lm5, lstd5);
 
-%labels
-xlabel('X_1 - first feature', 'FontWeight', 'bold', 'FontSize', 12);
-xlabel('Y_2 - second feature', 'FontWeight', 'bold', 'FontSize', 12);
+% the class eights
+x8 = score(all_data_label==8);
+lm8 = mean(x8);
+lstd8 = std(x8);
+class8_pdf = mvnpdf(x8, lm8, lstd8);
 
-%first class and mean
-scatter(classOnes(1,:), classOnes(2,:),'r','LineWidth',2,'Parent',xaxes1);
-hold on
-plot(MuOnes_est(1),MuOnes_est(2),'co','MarkerSize',8,'MarkerEdgeColor','c',...
-    'Color','c','LineWidth',2,'MarkerFaceColor','c','Parent',axes1);
-hold on
+figure(1); 
+hold on; 
+plot(x1, class1_pdf, 'r.'); 
+plot(x5,class5_pdf,'g.'); 
+plot(x8,class8_pdf,'b.'); 
+grid on;
+hold off
 
-%second class and mean
-scatter(classFives(1,:), classFives(2,:),'r','LineWidth',2,'Parent',xaxes1);
-hold on
-plot(MuFives_est(1),MuFives_est(2),'co','MarkerSize',8,'MarkerEdgeColor','m',...
-    'Color','m','LineWidth',2,'MarkerFaceColor','m','Parent',axes1);
-hold on
-
-%third class and mean
-scatter(classEights(1,:), classEights(2,:),'r','LineWidth',2,'Parent',xaxes1);
-hold on
-plot(MuEights_est(1),MuEights_est(2),'co','MarkerSize',8,'MarkerEdgeColor','m',...
-    'Color','m','LineWidth',2,'MarkerFaceColor','m','Parent',axes1);
-hold on
-
-%drawing projection vectors
-%first
-t = -10:25;
-line_x1 = t .* W1(1);
-line_y1 = t .* W1(1);
-%second
-t = -5:20;
-line_x2 = t .* W2(1);
-line_y2 = t .* W2(1);
-
-plot(line_x1,line_y1,'k-','LineWidth',3);
-grid on
-plot(line_x2,line_y2,'k-','LineWidth',3);
-grid on
+% W1 = v(:,1);
+% W2 = v(:,2);
+% 
+% hfig = figure;
+% axes1 = axes('parent', hfig, 'FontWeight','bold','FontSize',12);
+% hold('all');
+% 
+% %labels
+% xlabel('X_1 - first feature', 'FontWeight', 'bold', 'FontSize', 12);
+% xlabel('Y_2 - second feature', 'FontWeight', 'bold', 'FontSize', 12);
+% 
+% %first class and mean
+% scatter(classOnes(1,:), classOnes(2,:),'r','LineWidth',2,'Parent',axes1);
+% hold on
+% plot(muOnes(1),muOnes(2),'co','MarkerSize',8,'MarkerEdgeColor','c',...
+%     'Color','c','LineWidth',2,'MarkerFaceColor','c','Parent',axes1);
+% hold on
+% 
+% %second class and mean
+% scatter(classFives(1,:), classFives(2,:),'r','LineWidth',2,'Parent',axes1);
+% hold on
+% plot(muFives(1),muFives(2),'co','MarkerSize',8,'MarkerEdgeColor','m',...
+%     'Color','m','LineWidth',2,'MarkerFaceColor','m','Parent',axes1);
+% hold on
+% 
+% %third class and mean
+% scatter(classEights(1,:), classEights(2,:),'r','LineWidth',2,'Parent',axes1);
+% hold on
+% plot(muEights(1),muEights(2),'co','MarkerSize',8,'MarkerEdgeColor','m',...
+%     'Color','m','LineWidth',2,'MarkerFaceColor','m','Parent',axes1);
+% hold on
+% 
+% %drawing projection vectors
+% %first
+% t = -10:25;
+% line_x1 = t .* W1(1);
+% line_y1 = t .* W1(1);
+% %second
+% t = -5:20;
+% line_x2 = t .* W2(1);
+% line_y2 = t .* W2(1);
+% 
+% plot(line_x1,line_y1,'k-','LineWidth',3);
+% grid on
+% plot(line_x2,line_y2,'k-','LineWidth',3);
+% grid on
 
 
 % gscatter(score(:,1), score(:,1), all_data_label, 'rgb','os') %% look at only one direction will be fine.
