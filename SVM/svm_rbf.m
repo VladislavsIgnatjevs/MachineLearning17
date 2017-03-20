@@ -84,6 +84,14 @@ evenHigherGclassifResults = svmpredict(test_label_vector,test_instance_matrix, m
 %highest g
 highestGclassifResults = svmpredict(test_label_vector,test_instance_matrix, modelHighestG);
 
+
+[X,Y] = perfcurve(test_label_vector,dec_values,1);
+figure;
+plot(X,Y);
+hold on;
+title('ROC RBF SVM')
+hold off;
+
 %default G - classification accuracy lowest but remains stable over different trainings
 %hightest G - classsification accuracy highest, but accurracy is not stable
 %(+-2-5% every time the training is performed 

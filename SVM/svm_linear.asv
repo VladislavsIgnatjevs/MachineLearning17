@@ -64,9 +64,4 @@ model = svmtrain(training_label_vector, training_instance_matrix, '-t 0');
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
 
-figure; 
-
-plot(X,Y);
-hold on;
-title('ROC Linear SVM')
-hold off;
+figure; plot(X,Y);
