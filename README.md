@@ -9,4 +9,10 @@ Exercise uses PCA/LDA for dimensionality reduction (into 2 dim), k-means cluster
 
 Finally, it uses SVM with a RBF kernel, SVM
 with a linear kernel, and a neural network classifier with one hidden layer to classify the
-dataset in a 5-fold cross validation setting.
+dataset.
+
+Things to do:
+. add 5-fold cross validation setting.
+
+Please note that this was created for the university assignment, therefore this can contain bugs/mistakes. If you see ways to improve the code, let me know by comment or email :)
+
