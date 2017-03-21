@@ -1,7 +1,6 @@
 %load data
 load('AC50001_assignment2_data.mat');
 
-% using LDA to reduce the dimensions to 2 for each image descriptor
 %combine all data
 all_data = [digit_one digit_five digit_eight]' ;
 all_data_label = [];
