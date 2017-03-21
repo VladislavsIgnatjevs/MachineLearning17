@@ -38,7 +38,7 @@ covarOnes = cov(classOnes);
 covarFives = cov(classFives);
 covarEights = cov(classEights);
 
-%within class scatter mask
+%within class scatter matrix
 sw = covarOnes + covarFives + covarEights;
 
 %mean of the class means
@@ -66,6 +66,7 @@ inverted_SW=inv(sw_new)*sb;
 % computing the projection vectors:
 [v1,d] = eig(inverted_SW);
 
+% calculating score
 score = (all_data*v1(:,1:2));
 
 %Or the following code to plot data after LDA projection:
