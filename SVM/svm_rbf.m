@@ -74,6 +74,7 @@ evenHigherGclassifResults = []; %0.50
 highestGclassifResults = []; %0.91
 
 %default g
+disp('default g = 0.07');
 [predict_label, accuracy, dec_values] = svmpredict(test_label_vector,test_instance_matrix, modelDef);
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
@@ -84,6 +85,7 @@ title('ROC RBF SVM (g=0.07)')
 hold off;
 
 %smaller g
+disp('smaller g = 0.01');
 [predict_label, accuracy, dec_values] = svmpredict(test_label_vector,test_instance_matrix, modelSMallerG);
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
@@ -94,6 +96,7 @@ title('ROC RBF SVM (g=0.01)')
 hold off;
 
 %higher g
+disp('higher g = 0.20');
 [predict_label, accuracy, dec_values] = svmpredict(test_label_vector,test_instance_matrix, modelHigherG);
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
@@ -102,7 +105,9 @@ plot(X,Y);
 hold on;
 title('ROC RBF SVM (g=0.20)')
 hold off;
+
 %even more higher g
+disp('even higher g = 0.50');
 [predict_label, accuracy, dec_values] = svmpredict(test_label_vector,test_instance_matrix, modelEvenHigherG);
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
@@ -113,6 +118,7 @@ title('ROC RBF SVM (g=0.50)')
 hold off;
 
 %highest g
+disp('highest g = 0.91');
 [predict_label, accuracy, dec_values] = svmpredict(test_label_vector,test_instance_matrix, modelHighestG);
 
 [X,Y] = perfcurve(test_label_vector,dec_values,1);
